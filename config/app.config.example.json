@@ -1,0 +1,41 @@
+{
+  "defaults": {
+    "uiLanguage": "en",
+    "targetLanguage": "de",
+    "translationLanguage": "en",
+    "parseMode": "reader",
+    "readTranslations": false,
+    "hideTranslations": false,
+    "theme": "auto"
+  },
+  "documentSources": [
+    "docs/templates/"
+  ],
+  "defaultSources": [
+  ],
+  "otherSources": [
+  ],
+  "study": {
+    "localPersistence": false
+  },
+  "local": {
+    "enabled": false,
+    "defaultSources": [
+      "local-default/"
+    ],
+    "otherSources": [
+      "~/Documents/language_notes/a1_course/",
+      "~/Documents/english_study_notes/",
+      "~/Documents/german_study_notes/common_vocab.md",
+      "~/Documents/german_study_notes/lesson_sentences.txt",
+      "~/Documents/german_study_notes/vocab_table.csv",
+      "~/Documents/german_study_notes/sheet_export.tsv"
+    ],
+    "exclude": [
+      "~/Documents/english_study_notes/private/",
+      "~/Documents/english_study_notes/draft_notes.md",
+      "~/Documents/english_study_notes/daily_sentence_2026_03_*",
+      "~/Documents/language_notes/a1_course/*draft*"
+    ]
+  }
+}

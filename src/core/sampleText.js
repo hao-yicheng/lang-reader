@@ -1,0 +1,117 @@
+export const SAMPLE_TEXT = `# Vocab
+# Lesson 03 
+Source: 03_lecture.pdf, 03_hw.pdf, Note.md
+- der Beruf - profession / job - Ich bin Journalistin von Beruf.
+- beruflich - professionally / for work - Was machst du beruflich?
+- der Journalist / die Journalistin - journalist - Ich arbeite als Journalist. / Ich bin Journalistin von Beruf.
+- der Student / die Studentin - student - Sie ist Studentin.
+- die Universität - university - Sie studiert an der Universität Journalismus.
+- Journalismus - journalism - Sie studiert an der Universität Journalismus.
+- der Arzt / die Ärztin - doctor - Martin Koch ist Arzt.
+- die Krankenschwester - nurse - Ich arbeite als Krankenschwester in Österreich.
+- der Ingenieur - engineer - Er ist Ingenieur von Beruf.
+- die Sekretärin - secretary - Sie arbeitet als Sekretärin an der Universität.
+- der Lehrer / die Lehrerin - teacher - Sie ist Lehrerin.
+- der Verkäufer / die Verkäuferin - salesperson - ... als Verkäufer bei Superspar. / ... als Verkäuferin.
+- der Kellner / die Kellnerin - waiter / waitress - Er ist Kellner.
+- die Friseurin - hairdresser - Sie ist Friseurin.
+- der IT-Spezialist / die IT-Spezialistin - IT specialist - Klaus Weber ist IT-Spezialist ... / Gisela Becker arbeitet als IT-Spezialistin.
+- der Mechatroniker - mechatronics technician - Er macht eine Ausbildung als Mechatroniker.
+- die Ausbildung - vocational training - Er macht eine Ausbildung als Mechatroniker.
+- das Praktikum - internship - Max macht ein Praktikum als Architekt.
+- der Architekt / die Architektin - architect - Max macht ein Praktikum als Architekt.
+- der Partner / die Partnerin - partner - Ich habe einen Partner. / Er hat eine Partnerin.
+- das Kind / die Kinder - child / children - Ich habe zwei Kinder.
+- geschieden - divorced - Ich bin geschieden.
+- arbeitslos - unemployed - Sie ist arbeitslos.
+- Single - single - Ich bin Single.
+- allein - alone - Ich lebe nicht allein.
+- zusammen - together - Wir wohnen zusammen.
+- der Familienstand - marital status - Wie ist der Familienstand?
+- die Handy-Nummer - mobile number - Er hat die Handy-Nummer ...
+- die Stelle - position / job - Er hat eine Stelle als Arzt ...
+- die Kaffeemaschine - coffee machine - Das ist eine Kaffeemaschine.
+- der Staubsauger - vacuum cleaner - Note word: Staubsauger.
+- der Trockner - dryer - Note word: Trockner.
+# Lesson 02 
+Source: 02_Lecture.pdf, 02_hw.pdf
+- wer - who - Wer bist du?
+- wie - how - Wie geht es dir?
+- woher - where ... from - Woher kommst du?
+- heißen - to be called - Wie heißt du?
+- Wie bitte? - pardon? - Wie bitte?
+- Wie geht es dir? - How are you? - Wie geht es dir?
+- Woher kommst du? - Where are you from? - Woher kommst du?
+- kommen aus - to come from - Ich komme aus Griechenland.
+- der Vorname - first name - Mein Vorname ist Ioanna.
+- der Familienname / der Nachname - surname / last name - Mein Familienname ist Kuhn.
+- Deutschland - Germany - Ich komme aus Deutschland.
+- Griechenland - Greece - Ich komme aus Griechenland.
+- Polen - Poland - Aus Polen.
+- Österreich - Austria - Ich komme aus Österreich.
+- die Schweiz - Switzerland - Ich komme aus der Schweiz.
+- Frankreich - France - Ich komme aus Frankreich.
+- die Türkei - Turkey - Aus der Türkei.
+- der Iran - Iran - Aus dem Iran.
+- Es geht. - I'm okay / so-so - Wie geht es Sara?
+- Nicht so gut. - not so good - Wie geht es Sara?
+- Hallo - hello - Hallo, ich bin Severin.
+- Guten Tag - good day / hello - Guten Tag, ich heiße Topalidou.
+- Guten Morgen - good morning - Guten Morgen.
+- Guten Abend - good evening - Guten Abend.
+- Tschüs - bye - Tschüs.
+- das Alphabet - alphabet - Alphabet - Österreich.
+- richtig / falsch - right / wrong - Kreuzen Sie an: richtig oder falsch.
+- schreiben - to write - TEST 2 - Hören, Lesen, Schreiben, Sprechen.
+- sprechen - to speak - TEST 2 - Hören, Lesen, Schreiben, Sprechen.
+# Lesson 01 
+Source: 01_lecture.pdf, Note.md
+- wohnen - to live / reside - Paul wohnt in Hamburg.
+- sich freuen - to be glad / happy - Ich freue mich.
+- buchstabieren - to spell - Er buchstabiert das Wort.
+- hören - to hear / listen - Wir hören Musik.
+- notieren - to note down - Du notierst die Telefonnummer.
+- spielen - to play - Die Kinder spielen zu Hause.
+- machen - to do / make - Ihr macht eine Pizza.
+- leben - to live - Ich lebe in Deutschland.
+- sagen - to say - Maria sagt ihren Nachnamen.
+- arbeiten - to work - Fritz arbeitet in Berlin.
+- antworten - to answer - Hans und Lisa antworten auf die Frage.
+- korrigieren - to correct - Die Lehrerin korrigiert den Satz.
+- lernen - to learn / study - Wir lernen Deutsch.
+- fragen - to ask - Michael fragt Monika.
+- kosten - to cost - Das Buch kostet 16,90 Euro.
+- bezahlen - to pay - Du bezahlst das Buch.
+- kaufen - to buy - Ich kaufe ein Auto.
+- ergänzen - to complete / fill in - Ihr ergänzt den Satz.
+- geben - to give - Geben Sie mir doch bitte einen Tipp!
+- bekommen - to get / receive - Heute bekommt ihr keine Hausaufgaben.
+- scheinen - to shine / seem - Es scheint morgen die Sonne.
+- Kopfschmerzen - headache - Ich habe Kopfschmerzen.
+- neu - new - Du hast ein neues Auto.
+- groß - big / tall - Er ist sehr groß.
+- die Eltern - parents - Wo sind deine Eltern?
+- Hunger - hunger - Habt ihr Hunger?
+- kaputt - broken - Das Auto ist kaputt.
+- die Zeit - time - Haben Sie Zeit?
+- krank - sick / ill - Sind Sie krank?
+- zu Hause - at home - Hans ist zu Hause.
+- gut - good - Das ist gut!
+- die Wohnung - apartment - Wir haben eine schöne Wohnung.
+- schön - beautiful / nice - Du bist schön.
+- keine Ahnung - no idea - Ich habe keine Ahnung.
+- klein - small - Leo und Max sind noch sehr klein.
+- der Fußballer - football player - Franz ist Fußballer.
+- zu spät - too late - Ihr seid zu spät!
+- verheiratet - married - Sind Sie verheiratet?
+- essen - to eat - Verb list: essen, arbeiten, trinken, schlafen, lesen, schwimmen.
+- trinken - to drink - Verb list: essen, arbeiten, trinken, schlafen, lesen, schwimmen.
+- schlafen - to sleep - Verb list: essen, arbeiten, trinken, schlafen, lesen, schwimmen.
+- lesen - to read - Verb list: essen, arbeiten, trinken, schlafen, lesen, schwimmen.
+- schwimmen - to swim - Verb list: essen, arbeiten, trinken, schlafen, lesen, schwimmen.
+- Seife - soap - Sound example: ei -> Seife.
+- Feuer - fire - Sound example: eu -> Feuer.
+- Liebe - love - Sound example: ie -> Liebe.
+- Käse - cheese - Sound example: ä -> Käse.
+- Löwe - lion - Sound example: ö -> Löwe.
+- süß - sweet - Sound example: ü -> süß.`;

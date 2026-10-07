@@ -1,0 +1,30 @@
+/* The toolbar is outside the list's scroll area. */
+.files-panel-content { grid-template-rows:auto minmax(0,1fr) auto; align-content:stretch; overflow:hidden; min-height:0; }
+.files-panel-heading { flex:none; }
+.files-list { min-height:0; overflow:auto; align-content:start; }
+
+@media (min-width:768px) {
+  .app-shell { height:100dvh; min-height:660px; display:grid; grid-template-rows:auto minmax(520px,1fr); }
+  .workspace { --workspace-content-offset:90px; min-height:0; align-items:stretch; }
+  .main-panel { min-height:0; height:100%; display:flex; flex-direction:column; overflow:hidden; }
+  .main-panel > .panel-heading { flex:none; }
+  .panel-heading-actions:has(#documentMoreActions:not([hidden])) { margin-right:-14px; }
+  .main-panel > section:not([hidden]) { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .main-panel textarea { flex:1; min-height:0; resize:none; }
+  .parsed-table-wrap { flex:1; min-height:0; max-height:none; }
+  .table-toolbar { flex:none; }
+  /* Align the document border, Files divider and Parse control top. */
+  .parsed-view > .table-toolbar { line-height:16px; margin-bottom:calc(var(--workspace-content-offset) - 83px); }
+  #parseSettingsSection > h2 { min-height:calc(var(--workspace-content-offset) - 69px); }
+  .has-files-tree .files-panel-heading { min-height:calc(var(--workspace-content-offset) - 53px); }
+  .side-panel,.side-panel.collapsed { position:relative; top:auto; height:100%; min-height:0; max-height:none; }
+  .side-panel-surface { height:100%; display:flex; flex-direction:column; min-height:0; }
+  .side-panel-topbar { flex:0 0 46px; }
+  .side-panel-content,.files-panel-content { flex:1; min-height:0; max-height:none; }
+  .side-panel-content { align-content:start; }
+  .study-workspace,.study-workspace:has(.study-setup[data-step="sections"]) { height:100%; min-height:0; }
+}
+
+@media (min-width:768px) and (pointer:coarse) {
+  .workspace { --workspace-content-offset:96px; }
+}

@@ -1,0 +1,33 @@
+.app-notice {
+  position: fixed;
+  z-index: 1000;
+  width: max-content;
+  max-width: min(290px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 11px 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel-solid);
+  box-shadow: var(--shadow-lg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: center;
+  overflow-wrap: anywhere;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 0);
+  transition: opacity 120ms ease;
+}
+
+.app-notice.visible {
+  opacity: 1;
+}
+
+.app-notice[data-placement="above"] {
+  transform: translate(-50%, -100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-notice { transition: none; }
+}

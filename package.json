@@ -1,0 +1,12 @@
+{
+  "name": "lang-reader",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:samples": "node local-runtime/build-local-samples.js",
+    "build:local-samples": "node local-runtime/build-local-samples.js",
+    "serve": "npm run build:samples && npx http-server -p 5173 -c-1",
+    "serve:study": "npm run build:samples && node local-runtime/local-study-server.js"
+  }
+}

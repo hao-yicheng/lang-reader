@@ -1,0 +1,129 @@
+:root {
+  color-scheme: light dark;
+
+  --control-hover-duration: 120ms;
+  --control-hover-easing: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --accent-rgb: 15 118 110;
+  --accent-highlight-rgb: 20 184 166;
+  --warning-rgb: 245 158 11;
+  --warning-strong-rgb: 217 119 6;
+
+  --bg: #f2f3f2;
+  --page-background-image: none;
+  --control-bg: #eceeec;
+  --control-hover: #e3e6e3;
+  --panel: #ffffff;
+  --panel-solid: #ffffff;
+  --panel-tab-muted: #e2e5e2;
+  --surface: var(--panel-solid);
+  --text: #0f172a;
+  --muted: #64748b;
+  --text-subtle: var(--muted);
+  --language-chip-text: #283d32;
+  --line: rgba(226, 232, 240, 0.8);
+  --accent: rgb(var(--accent-rgb));
+  --accent-strong: #115e59;
+  --accent-secondary: #238a7b;
+  --modified-file: color-mix(in srgb, var(--accent) 65%, var(--panel-solid));
+  --accent-glow: rgb(var(--accent-rgb) / 15%);
+  --accent-soft: rgb(var(--accent-rgb) / 8%);
+  --accent-soft-strong: rgb(var(--accent-rgb) / 16%);
+  --accent-border-soft: rgb(var(--accent-rgb) / 20%);
+  --accent-border-strong: rgb(var(--accent-rgb) / 40%);
+  --soft: #f0fdfa;
+  --on-accent: #ffffff;
+
+  --warning: rgb(var(--warning-rgb));
+  --warning-strong: rgb(var(--warning-strong-rgb));
+  --warning-soft: rgb(var(--warning-rgb) / 10%);
+  --warning-soft-strong: rgb(var(--warning-rgb) / 16%);
+  --warning-border: rgb(var(--warning-rgb) / 40%);
+  --study-know: var(--accent);
+  --study-dont-know: var(--warning);
+
+  --translation: rgb(var(--warning-rgb) / 8%);
+  --sentence: rgba(59, 130, 246, 0.08);
+  --vocab-tint-base: 92%;
+  --vocab-muted-darken: 6%;
+  --vocab-word: color-mix(in srgb, var(--panel-solid) var(--vocab-tint-base), #3b82f6);
+  --vocab-translation: color-mix(in srgb, var(--panel-solid) var(--vocab-tint-base), #f59e0b);
+  --vocab-sentence: color-mix(in srgb, var(--panel-solid) var(--vocab-tint-base), #8b5cf6);
+  --vocab-example: color-mix(in srgb, var(--panel-solid) var(--vocab-tint-base), #14b8a6);
+  --vocab-note: color-mix(in srgb, var(--panel-solid) var(--vocab-tint-base), #94a3b8);
+  --active-row-bg: rgba(13, 148, 136, 0.08);
+
+  --control-accent-border: #d2d8d3;
+  --chart-track: rgba(0, 0, 0, 0.08);
+  --overlay: rgba(9, 13, 22, 0.45);
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --font-display: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+:root.light { color-scheme: light; }
+:root.dark { color-scheme: dark; }
+
+:root.dark {
+  --vocab-tint-base: 85%;
+  --vocab-muted-darken: 22%;
+  --control-bg: #272727;
+  --control-hover: #333333;
+  --control-accent-border: #444444;
+  --accent-rgb: 20 184 166;
+  --bg: #101010;
+  --panel: rgba(27, 27, 27, 0.88);
+  --panel-solid: #1b1b1b;
+  --panel-tab-muted: #303030;
+  --text: #f3f3f3;
+  --muted: #aaaaaa;
+  --line: rgba(115, 115, 115, 0.3);
+  --accent-strong: #2dd4bf;
+  --accent-glow: rgb(var(--accent-rgb) / 25%);
+  --soft: rgb(var(--accent-rgb) / 10%);
+  --translation: rgb(var(--warning-rgb) / 15%);
+  --sentence: rgba(59, 130, 246, 0.15);
+  --active-row-bg: rgb(var(--accent-rgb) / 12%);
+  --chart-track: rgba(255, 255, 255, 0.12);
+  --overlay: rgba(0, 0, 0, 0.5);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 15px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) {
+    --vocab-tint-base: 85%;
+    --vocab-muted-darken: 22%;
+    --control-bg: #272727;
+    --control-hover: #333333;
+    --control-accent-border: #444444;
+    --accent-rgb: 20 184 166;
+    --bg: #101010;
+    --panel: rgba(27, 27, 27, 0.88);
+    --panel-solid: #1b1b1b;
+    --panel-tab-muted: #303030;
+    --text: #f3f3f3;
+    --muted: #aaaaaa;
+    --line: rgba(115, 115, 115, 0.3);
+    --accent-strong: #2dd4bf;
+    --accent-glow: rgb(var(--accent-rgb) / 25%);
+    --soft: rgb(var(--accent-rgb) / 10%);
+    --translation: rgb(var(--warning-rgb) / 15%);
+    --sentence: rgba(59, 130, 246, 0.15);
+    --active-row-bg: rgb(var(--accent-rgb) / 12%);
+    --chart-track: rgba(255, 255, 255, 0.12);
+    --overlay: rgba(0, 0, 0, 0.5);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 15px 25px -5px rgba(0, 0, 0, 0.6);
+  }
+}

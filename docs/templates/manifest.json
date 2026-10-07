@@ -1,0 +1,20 @@
+{
+  "files": [
+    {
+      "label": "how_to_use",
+      "path": "docs/templates/how-to-use.md"
+    },
+    {
+      "label": "reader_template",
+      "path": "docs/templates/reader-template.md"
+    },
+    {
+      "label": "vocabulary_template",
+      "path": "docs/templates/vocabulary-template.md"
+    },
+    {
+      "label": "reformat_notes_prompt",
+      "path": "docs/templates/reformat-notes.md"
+    }
+  ]
+}
