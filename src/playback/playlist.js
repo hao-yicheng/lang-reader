@@ -1,4 +1,4 @@
-import { splitSentences } from "../parsing/textSegmentation.js";
+import { splitSentences, splitWordTokens } from "../parsing/textSegmentation.js";
 
 export function createPlaylist(items = [], options = {}) {
   return {
@@ -93,7 +93,8 @@ function clamp(value, min, max) {
 }
 
 function splitWords(text, language) {
-  if (language === "zh") return [...String(text).replace(/\s+/g, "")].filter(Boolean);
+  if (/^zh(-|$)/i.test(language)) return [...String(text).replace(/\s+/g, "")].filter(Boolean);
+  if (/^(ja|th|lo|km|my)(-|$)/i.test(language)) return splitWordTokens(text, language).filter(token => token.clickable).map(token => token.text);
   return String(text)
     .split(/[\s,;:!?()"'„“”]+/)
     .map((word) => word.trim())

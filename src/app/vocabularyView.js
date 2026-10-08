@@ -113,6 +113,8 @@ export function createVocabularyView({ document, container, getItems, getActiveI
     const language = getColumnLanguage(part, columnIndex);
     const clickUnitLevel = getRenderUnitLevel();
     cell.className = `part-cell role-${role} lang-${language}`;
+    cell.dir = "auto";
+    cell.lang = language;
     cell.dataset.tone = columnTone(getColumnTags()[columnIndex], part?.role, columnIndex);
     if (part?.warning) cell.classList.add("format-warning");
     cell.style.width = getColumnWidth(columnIndex);

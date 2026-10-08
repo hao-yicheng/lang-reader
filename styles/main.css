@@ -43,6 +43,14 @@ body {
   transition: background-color 330ms ease, color 330ms ease;
 }
 
+/* Theme palettes switch atomically; the button's WAAPI icon motion is independent. */
+:root.theme-switching,
+:root.theme-switching *,
+:root.theme-switching *::before,
+:root.theme-switching *::after {
+  transition: none !important;
+}
+
 .theme-toggle-button {
   display: grid;
   place-items: center;
@@ -2761,6 +2769,11 @@ input[type="range"] {
   border-color: #b5c989;
 }
 
+.lang-ja {
+  background: #f6e5ec;
+  border-color: #d7a4b8;
+}
+
 .lang-skip {
   background: #f2f3f4;
   border-color: #cfd4d8;
@@ -3709,9 +3722,10 @@ textarea {
   text-align: right;
 }
 
-.settings-playback-sliders { display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; row-gap: var(--settings-row-gap); align-items: center; }
+#settingsPanelContent { --settings-slider-label-width: 60px; --settings-slider-gap: 10px; }
+.settings-playback-sliders { display: grid; grid-template-columns: var(--settings-slider-label-width) minmax(0, 1fr); column-gap: var(--settings-slider-gap); row-gap: var(--settings-row-gap); align-items: center; }
 .settings-playback-slider { display: contents; }
-.settings-slider-pair { display: flex; align-items: center; justify-content: space-between; gap: 2px; height: var(--settings-row-height); white-space: nowrap; }
+.settings-slider-pair { display: flex; align-items: center; justify-content: space-between; gap: 6px; height: var(--settings-row-height); white-space: nowrap; }
 .settings-slider-label { font-size: 10px; font-weight: 700; color: var(--muted); }
 .settings-loop-label { display: inline-flex; align-items: center; gap: 4px; }
 .settings-loop-label svg { display: block; width: 13px; height: 13px; }
@@ -3723,7 +3737,7 @@ textarea {
 .settings-playback-sliders .slider-r1,
 .settings-speech-sliders .slider-r1 { height: var(--settings-row-height); }
 .settings-speech-sliders { display: grid; gap: var(--settings-row-gap); }
-.settings-speech-slider { display: grid; grid-template-columns: 16px 40px minmax(0, 1fr); align-items: center; gap: 10px; min-height: var(--settings-row-height); }
+.settings-speech-slider { display: grid; grid-template-columns: 16px calc(var(--settings-slider-label-width) - 16px - var(--settings-slider-gap)) minmax(0, 1fr); align-items: center; gap: var(--settings-slider-gap); min-height: var(--settings-row-height); }
 .settings-speech-icon { color: var(--muted); }
 .settings-speech-slider output { text-align: left; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .settings-gap-slider .settings-slider-label { transform: translateX(1px); }

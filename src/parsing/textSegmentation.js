@@ -53,10 +53,23 @@ export function splitSentences(text, options) {
   return splitSentenceRanges(text, options).map((range) => range.text);
 }
 
-export function splitWordTokens(text) {
+const wordSegmenters = new Map();
+
+export function splitWordTokens(text, language = "en") {
   const source = String(text || "");
+  if (/^(ja|th|lo|km|my)(-|$)/i.test(language) && typeof Intl.Segmenter === "function") {
+    try {
+      if (!wordSegmenters.has(language)) {
+        if (wordSegmenters.size >= 32) wordSegmenters.clear();
+        wordSegmenters.set(language, new Intl.Segmenter(language, { granularity: "word" }));
+      }
+      return [...wordSegmenters.get(language).segment(source)].map(part => ({
+        text: part.segment, clickable: Boolean(part.isWordLike), start: part.index, end: part.index + part.segment.length
+      }));
+    } catch { /* Preserve source offsets without Intl support. */ }
+  }
   const tokens = [];
-  const words = /[\p{L}\p{N}]+(?:[-'’][\p{L}\p{N}]+)*/gu;
+  const words = /[\p{L}\p{N}][\p{L}\p{M}\p{N}\u200c\u200d]*(?:[-'’][\p{L}\p{M}\p{N}\u200c\u200d]+)*/gu;
   let cursor = 0;
   for (const match of source.matchAll(words)) {
     if (match.index > cursor) tokens.push({ text: source.slice(cursor, match.index), clickable: false, start: cursor, end: match.index });
@@ -70,11 +83,11 @@ export function splitWordTokens(text) {
 
 function getSentenceEnd(source, index) {
   const char = source[index];
-  if (!/[.!?。！？．…]/.test(char)) return 0;
+  if (!/[.!?。！？．…؟।॥]/.test(char)) return 0;
   if (/[.．]/.test(char) && isNumericSeparator(source, index)) return 0;
 
   let end = index + 1;
-  while (end < source.length && /[.!?。！？．…]/.test(source[end])) end += 1;
+  while (end < source.length && /[.!?。！？．…؟।॥]/.test(source[end])) end += 1;
   const terminal = source.slice(index, end);
   while (end < source.length && /["'‘’“”«»」』）)]/.test(source[end])) end += 1;
   const next = source[end] || "";
@@ -87,10 +100,10 @@ function getSentenceEnd(source, index) {
     if (!annotationEnd) break;
     end = annotationEnd;
     annotated = true;
-    while (end < source.length && /[.!?。！？．…;；:："'‘’“”«»」』）)]/.test(source[end])) end += 1;
+    while (end < source.length && /[.!?。！？．…؟।॥;；:："'‘’“”«»」』）)]/.test(source[end])) end += 1;
   }
   // CJK terminals and question/exclamation marks need no following space.
-  return /[!?。！？]/.test(terminal) || !next || /\s/u.test(next)
+  return /[!?。！？؟।॥]/.test(terminal) || !next || /\s/u.test(next)
     || /\p{Script=Han}/u.test(next) || annotated ? end : 0;
 }
 

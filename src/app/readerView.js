@@ -123,6 +123,7 @@ export function createReaderView({ document, container, getBlocks, getEffectiveC
   function renderReaderInline(text, itemIndex, columnIndex = 0) {
     const wrap = document.createElement("span");
     wrap.className = "reader-inline";
+    wrap.dir = "auto";
     if (itemIndex === undefined || itemIndex === null || itemIndex < 0) {
       wrap.textContent = text;
       return wrap;

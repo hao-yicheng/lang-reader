@@ -46,18 +46,48 @@ export function createDocumentController({ state, document, window, navigator, e
   }
 
   async function autoLoadSample() {
+    const cached = {
+      text: state.saved?.sourceText,
+      key: state.saved?.activeSourceKey || state.saved?.documentPath || "",
+      name: state.saved?.activeFileName || "",
+      mode: state.sourceMode
+    };
     const restorableImport = state.sourceMode === "import"
       ? getRestorableImportSource(state.lastImportSourceKey)
       : "";
+    const candidates = [
+      ...(restorableImport ? [{ path: restorableImport, mode: "import" }] : []),
+      ...[...new Set([getValidDocumentPath(state.lastDocumentPath), ...state.documentOptions.map(option => option.path)])]
+        .filter(path => state.documentOptions.some(option => option.path === path))
+        .map(path => ({ path, mode: "document" })),
+      ...state.sampleOptions.map(option => ({ path: option.path, mode: "import" }))
+    ];
     let loaded = false;
-    if (restorableImport) {
+    const attempted = new Set();
+    for (const candidate of candidates) {
+      if (attempted.has(candidate.path)) continue;
+      attempted.add(candidate.path);
+      state.sourceMode = candidate.mode;
+      syncSourceContext();
+      loaded = await loadSourcePath(candidate.path);
+      if (loaded) break;
+    }
+    if (!loaded && typeof cached.text === "string" && cached.text.trim()) {
+      elements.sourceInput.value = cached.text;
+      state.activeSourceKey = cached.key || "untitled.md";
+      state.activeFileName = cached.name || state.activeSourceKey.split("/").pop();
+      state.sourceMode = cached.key ? cached.mode : "import";
+      if (state.sourceMode === "document") state.lastDocumentPath = state.activeSourceKey;
+      else state.lastImportSourceKey = state.activeSourceKey;
+      loaded = true;
+    } else if (!loaded) {
+      // Do not mislabel the embedded example as a successfully loaded guide.
+      elements.sourceInput.value = "";
+      state.activeSourceKey = "";
+      state.activeFileName = "";
       state.sourceMode = "import";
-      syncSourceContext();
-      loaded = await loadSourcePath(restorableImport);
-    } else {
-      state.sourceMode = "document";
-      syncSourceContext();
-      loaded = await loadDocument(true);
+      state.lastImportSourceKey = "";
+      setStatus(t("empty"));
     }
     if (loaded && elements.sourceInput.value.trim()) parseAndShow(false);
     else if (loaded) setStatus(t("empty"));

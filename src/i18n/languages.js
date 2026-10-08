@@ -15,7 +15,10 @@ const VOICE_LANGUAGE_NAME_RE = new RegExp(
 );
 
 export function getLanguage(code) {
-  return LANGUAGE_DEFINITIONS[code] || LANGUAGE_DEFINITIONS[LANGUAGE_ORDER[0]];
+  if (LANGUAGE_DEFINITIONS[code]) return LANGUAGE_DEFINITIONS[code];
+  const tag = canonicalLanguageTag(code) || "und";
+  return { code: tag, tts: tag, short: tag.split("-")[0].toUpperCase(),
+    names: Object.fromEntries(LOCALE_ORDER.map(ui => [ui, displayLanguageName(tag, ui)])), aliases: [] };
 }
 
 export function getLanguageLabel(code, uiLanguage = "en") {
@@ -26,7 +29,52 @@ export function getLanguageLabel(code, uiLanguage = "en") {
 export function normalizeDocumentLanguage(value) {
   const normalized = normalizeAlias(value);
   if (/^(mix|mixed|na|n\/a|same|target)$/.test(normalized)) return "target";
-  return LANGUAGE_ALIASES.get(normalized) || "";
+  return LANGUAGE_ALIASES.get(normalized) || canonicalLanguageTag(value);
+}
+
+export function canonicalLanguageTag(value) {
+  try {
+    const tag = Intl.getCanonicalLocales(String(value || "").trim().replace(/_/g, "-"))[0] || "";
+    return ["und", "zxx", "mul"].includes(tag) ? "" : tag;
+  } catch { return ""; }
+}
+
+export function isValidUiLanguage(code) {
+  return LOCALE_ORDER.includes(code);
+}
+
+export function getSpeechLanguages(voices = [], retained = []) {
+  const codes = new Set(LANGUAGE_ORDER);
+  for (const code of [...voices.map(voice => voice.lang), ...retained]) {
+    const normalized = normalizeDocumentLanguage(code);
+    if (normalized && normalized !== "target") codes.add(normalized);
+  }
+  return [...codes].map(getLanguage);
+}
+
+export function voiceMatchesLanguage(voice, language) {
+  const requested = canonicalLanguageTag(language);
+  const available = canonicalLanguageTag(voice?.lang);
+  if (!requested || !available) return false;
+  const target = new Intl.Locale(requested);
+  const candidate = new Intl.Locale(available);
+  if (target.language !== candidate.language) return false;
+  if (!target.script && !target.region) return true;
+  const expandedTarget = target.maximize();
+  const expandedVoice = candidate.maximize();
+  return expandedTarget.script === expandedVoice.script
+    && (!target.region || expandedTarget.region === expandedVoice.region);
+}
+
+export function splitGraphemes(text, language) {
+  if (typeof Intl.Segmenter !== "function") return Array.from(String(text || ""));
+  return [...new Intl.Segmenter(canonicalLanguageTag(language) || undefined, { granularity: "grapheme" })
+    .segment(String(text || ""))].map(part => part.segment);
+}
+
+function displayLanguageName(tag, ui) {
+  try { return new Intl.DisplayNames([ui], { type: "language" }).of(tag) || tag; }
+  catch { return tag; }
 }
 
 export function speechLangFor(language) {
@@ -38,7 +86,7 @@ export function htmlLangFor(language) {
 }
 
 export function isValidLanguageCode(code) {
-  return Object.hasOwn(LANGUAGE_DEFINITIONS, code);
+  return Boolean(canonicalLanguageTag(code));
 }
 
 export function getVoiceBaseName(name) {

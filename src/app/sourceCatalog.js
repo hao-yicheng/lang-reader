@@ -28,7 +28,7 @@ export async function getDocumentsWithManifest(config, environment) {
   }
   const deduped = dedupeSamples(documents);
   deduped.sort((a, b) => documentSortScore(a.path) - documentSortScore(b.path) || a.label.localeCompare(b.label));
-  return deduped.length ? deduped : [{ label: "how_to_use", path: DEFAULT_DOCUMENT_PATH }];
+  return deduped;
 }
 
 async function resolveSampleSource(source, environment) {

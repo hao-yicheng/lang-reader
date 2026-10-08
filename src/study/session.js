@@ -1,4 +1,5 @@
 import { flattenStudyCardsForScopes, normalizeProgressTuple, updateStudyProgress } from "./model.js";
+import { canonicalLanguageTag, splitGraphemes } from "../i18n/languages.js";
 
 export const STUDY_ORDERS = ["sequential", "random", "mistakes"];
 export function createStudySession({
@@ -22,6 +23,7 @@ export function createStudySession({
   if (limit) queue = queue.slice(0, limit);
   return {
     mode,
+    language: document?.target || "de",
     order,
     size: limit,
     round,
@@ -70,19 +72,19 @@ export function checkStudyAnswer(session, answer, options = {}) {
   const expected = current.card.vocab;
   const literalUser = normalizeLiteralAnswer(answer);
   const literalExpected = normalizeLiteralAnswer(expected);
-  const normUser = normalizeAnswer(answer);
-  const normExpected = normalizeAnswer(expected);
+  const normUser = normalizeAnswer(answer, session.language);
+  const normExpected = normalizeAnswer(expected, session.language);
   const exactMatch = literalUser === literalExpected;
   const fuzzyEnabled = Boolean(options.fuzzyDictation ?? session?.fuzzyDictation ?? true);
-  const fuzzyMatch = !exactMatch && fuzzyEnabled && isFuzzyEquivalent(normUser, normExpected);
+  const fuzzyMatch = !exactMatch && fuzzyEnabled && isFuzzyEquivalent(normUser, normExpected, session.language);
 
   const correct = exactMatch || fuzzyMatch;
-  const fuzzyUser = normalizeFuzzy(normUser);
-  const fuzzyExpected = normalizeFuzzy(normExpected);
+  const fuzzyUser = normalizeFuzzy(normUser, session.language);
+  const fuzzyExpected = normalizeFuzzy(normExpected, session.language);
   const distance = levenshteinDistance(fuzzyUser, fuzzyExpected);
   const errorRatio = distance / Math.max(
-    Array.from(fuzzyUser).length,
-    Array.from(fuzzyExpected).length,
+    splitGraphemes(fuzzyUser).length,
+    splitGraphemes(fuzzyExpected).length,
     1
   );
   const severity = correct ? "correct" : (errorRatio > 0.4 ? "wrong" : "close");
@@ -163,9 +165,9 @@ export function getStudySessionProgress(session) {
   };
 }
 
-export function normalizeAnswer(value) {
+export function normalizeAnswer(value, language) {
   return normalizeLiteralAnswer(value)
-    .toLocaleLowerCase();
+    .toLocaleLowerCase(canonicalLanguageTag(language) || undefined);
 }
 
 function normalizeLiteralAnswer(value) {
@@ -175,8 +177,10 @@ function normalizeLiteralAnswer(value) {
     .replace(/\s+/g, " ");
 }
 
-export function normalizeFuzzy(value) {
-  return normalizeAnswer(value)
+export function normalizeFuzzy(value, language = "de") {
+  const normalized = normalizeAnswer(value, language);
+  if (!/^de(-|$)/i.test(language)) return normalized;
+  return normalized
     .replace(/ä/g, "a")
     .replace(/ö/g, "o")
     .replace(/ü/g, "u")
@@ -191,8 +195,9 @@ function normalizeGermanTransliteration(value) {
     .replace(/ß/g, "ss");
 }
 
-function isFuzzyEquivalent(left, right) {
+function isFuzzyEquivalent(left, right, language = "de") {
   if (!left || !right) return false;
+  if (!/^de(-|$)/i.test(language)) return left === right;
   const leftVariants = new Set([
     normalizeFuzzy(left),
     normalizeGermanTransliteration(left)
@@ -204,8 +209,8 @@ function isFuzzyEquivalent(left, right) {
 }
 
 function levenshteinDistance(left, right) {
-  const source = Array.from(left);
-  const target = Array.from(right);
+  const source = splitGraphemes(left);
+  const target = splitGraphemes(right);
   let previous = Array.from({ length: target.length + 1 }, (_, index) => index);
 
   source.forEach((sourceChar, sourceIndex) => {

@@ -6,7 +6,8 @@ export default {
     en: "Bulgarian",
     zh: "保加利亚语",
     de: "Bulgarisch",
-    bg: "Български"
+    bg: "Български",
+    ja: "ブルガリア語"
   },
   aliases: ["保加利亞語"],
   speechCharacters: {

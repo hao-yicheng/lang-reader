@@ -6,7 +6,8 @@ export default {
     en: "Chinese",
     zh: "中文",
     de: "Chinesisch",
-    bg: "Китайски"
+    bg: "Китайски",
+    ja: "中国語"
   },
   aliases: ["cn", "汉语", "漢語"],
   speechCharacters: {

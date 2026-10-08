@@ -1,4 +1,4 @@
-import { LANGUAGES, getLanguage, getLanguageLabel } from "../i18n/languages.js";
+import { getSpeechLanguages, getLanguage, getLanguageLabel } from "../i18n/languages.js";
 import { DEFAULT_TAG } from "../core/config.js";
 import { getShrinkCapacity } from "../ui/tableLayout.js";
 import { SPEAKER_ON_SVG, SPEAKER_MUTE_SVG } from "../ui/uiIcons.js";
@@ -206,6 +206,7 @@ export function createColumnControls({ document, window, state, t, saveSettings,
       button.setAttribute("aria-expanded", String(open));
       menu.hidden = !open;
       if (open) {
+        renderLanguageOptions(menu, index, search.value || "");
         document.body.append(menu);
         if (menu.showPopover) menu.showPopover();
         positionLanguageMenu(picker);
@@ -261,7 +262,8 @@ export function createColumnControls({ document, window, state, t, saveSettings,
   function renderLanguageOptions(menu, columnIndex, query) {
     menu.querySelectorAll(".language-option").forEach((node) => node.remove());
     const normalizedQuery = query.trim().toLowerCase();
-    LANGUAGES
+    getSpeechLanguages(window.speechSynthesis?.getVoices() || [], [state.targetLanguage, state.translationLanguage,
+      ...(state.columnLanguages || [])])
       .filter((language) => {
         const haystack = `${language.code} ${language.short} ${Object.values(language.names).join(" ")}`.toLowerCase();
         return !normalizedQuery || haystack.includes(normalizedQuery);

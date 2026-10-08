@@ -6,7 +6,8 @@ export default {
     en: "German",
     zh: "德语",
     de: "Deutsch",
-    bg: "Немски"
+    bg: "Немски",
+    ja: "ドイツ語"
   },
   aliases: [],
   speechCharacters: {

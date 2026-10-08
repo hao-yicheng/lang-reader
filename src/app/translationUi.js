@@ -32,6 +32,7 @@ export function createTranslationUi({ state, services, elements, document, windo
     const readerTranslationControls = state.isParsedView && state.parsedViewMode === "reader" && docHasTranslations() && !services.studyController.isActive();
 
     elements.toggleTranslationButton.classList.toggle("active", !hideTrans);
+    elements.toggleTranslationButton.setAttribute("aria-pressed", String(!hideTrans));
     elements.toggleReadTranslationButton.classList.toggle("active", readTrans);
 
     // Dynamically set the SVG to reflect active or mute state
@@ -174,6 +175,9 @@ export function createTranslationUi({ state, services, elements, document, windo
       refreshVoices();
     });
 
+    elements.toggleTranslationButton.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") event.stopPropagation();
+    });
     elements.toggleTranslationButton.addEventListener("click", () => {
       elements.showTranslationsInput.checked = !elements.showTranslationsInput.checked;
       elements.showTranslationsInput.dispatchEvent(new Event("change"));

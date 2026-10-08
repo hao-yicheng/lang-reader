@@ -52,7 +52,7 @@ function buildBaiduUrl(text, source, target) {
 
 function googleLanguage(language) {
   const value = String(language || "en");
-  if (/^zh/i.test(value)) return "zh-CN";
+  if (/^zh/i.test(value)) return /(?:TW|HK|MO|Hant)/i.test(value) ? "zh-TW" : "zh-CN";
   return baseLanguage(value);
 }
 

@@ -28,6 +28,7 @@ import { createPlaybackController } from "./app/playbackController.js";
 import { createSettingsController } from "./app/settingsController.js";
 import { createWorkspaceUi } from "./app/workspaceUi.js";
 import { createTranslationUi } from "./app/translationUi.js";
+import { isValidUiLanguage } from "./i18n/languages.js";
 
 const showNotice = createNotice();
 const sourceWarnings = createSourceWarnings();
@@ -399,7 +400,7 @@ let isPlaying = false;
 let isParsedView = false;
 let activeItemIndex = 0;
 let activeColumnIndex = 0;
-let uiLanguage = getValidLanguageCode(saved.uiLanguage, "en");
+let uiLanguage = isValidUiLanguage(saved.uiLanguage) ? saved.uiLanguage : "en";
 let targetLanguage = getValidLanguageCode(saved.targetLanguage, DEFAULT_TARGET_LANGUAGE);
 let translationLanguage = getValidLanguageCode(saved.translationLanguage, uiLanguage);
 let columnRoles = normalizeRoleSettings(saved.columnRoles, DEFAULT_ROLES);

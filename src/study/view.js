@@ -9,6 +9,7 @@ import {
   initSegmentedControls
 } from "../ui/customControls.js";
 import { buildAdaptiveRangeTicks } from "../ui/rangeTicks.js";
+import { canonicalLanguageTag, splitGraphemes } from "../i18n/languages.js";
 
 export function renderStudyWorkspace(container, {
   session,
@@ -531,7 +532,7 @@ function renderPokerDeck(session, labels, callbacks) {
         if (session.checked) {
           cardNode.append(renderVocabButton(entry.card, callbacks.onSpeak, {
             html: renderDiffMarkup(entry.card.vocab, session.answer, {
-              fuzzy: session.lastFuzzy
+              fuzzy: session.lastFuzzy, language: session.language
             })
           }));
           cardNode.append(renderAnswer(entry.card, session, labels));
@@ -582,6 +583,8 @@ function renderPrompt(session, card, labels, callbacks) {
     input.type = "text";
     input.autocomplete = "off";
     input.spellcheck = false;
+    input.dir = "auto";
+    input.lang = session.language;
     input.setAttribute("aria-label", labels.answer);
     const check = button(labels.check, "primary-button study-check-button", () => callbacks.onCheck(input.value));
     check.type = "submit";
@@ -595,6 +598,7 @@ function renderPrompt(session, card, labels, callbacks) {
   }
 
   const vocab = button(card.vocab, "study-vocab interactive-text-unit", callbacks.onSpeak);
+  vocab.dir = "auto";
   prompt.append(vocab);
   return prompt;
 }
@@ -605,6 +609,7 @@ function renderVocabButton(card, onSpeak, options = {}) {
     onSpeak();
   });
   if (options.html) vocab.innerHTML = options.html;
+  vocab.dir = "auto";
   return vocab;
 }
 
@@ -628,10 +633,12 @@ function renderAnswer(card, session, labels) {
 
   const meaning = createElement("p", "study-meaning");
   meaning.textContent = card.meaning;
+  meaning.dir = "auto";
   answer.append(meaning);
   if (session.mode !== "dictation" && card.sentence) {
     const sentence = createElement("p", "study-sentence");
     sentence.textContent = card.sentence;
+    sentence.dir = "auto";
     answer.append(sentence);
   }
   return answer;
@@ -644,7 +651,7 @@ export function renderDiffMarkup(expected, answer, options = {}) {
     return escapeHtml(normExp);
   }
   const fuzzyClass = options.fuzzy ? " is-fuzzy" : "";
-  return buildCharacterDiff(normExp, normAns).map((operation) => {
+  return buildCharacterDiff(normExp, normAns, options.language).map((operation) => {
     if (operation.type === "equal") return escapeHtml(operation.expected);
     if (operation.type === "normalized") {
       return `<mark class="study-diff-char is-normalized is-fuzzy" title="Typed: ${escapeHtml(operation.actual)}">${escapeHtml(operation.expected)}</mark>`;
@@ -657,16 +664,17 @@ export function renderDiffMarkup(expected, answer, options = {}) {
   }).join("");
 }
 
-function buildCharacterDiff(expected, answer) {
-  const left = Array.from(expected);
-  const right = Array.from(answer);
+function buildCharacterDiff(expected, answer, language) {
+  const left = splitGraphemes(expected, language);
+  const right = splitGraphemes(answer, language);
+  const lower = value => value.toLocaleLowerCase(canonicalLanguageTag(language) || undefined);
   const matrix = Array.from({ length: left.length + 1 }, () => Array(right.length + 1).fill(0));
   for (let leftIndex = 0; leftIndex <= left.length; leftIndex += 1) matrix[leftIndex][0] = leftIndex;
   for (let rightIndex = 0; rightIndex <= right.length; rightIndex += 1) matrix[0][rightIndex] = rightIndex;
 
   for (let leftIndex = 1; leftIndex <= left.length; leftIndex += 1) {
     for (let rightIndex = 1; rightIndex <= right.length; rightIndex += 1) {
-      const matches = left[leftIndex - 1].toLocaleLowerCase() === right[rightIndex - 1].toLocaleLowerCase();
+      const matches = lower(left[leftIndex - 1]) === lower(right[rightIndex - 1]);
       matrix[leftIndex][rightIndex] = Math.min(
         matrix[leftIndex - 1][rightIndex] + 1,
         matrix[leftIndex][rightIndex - 1] + 1,
@@ -682,7 +690,7 @@ function buildCharacterDiff(expected, answer) {
     const expectedChar = left[leftIndex - 1];
     const actualChar = right[rightIndex - 1];
     if (leftIndex && rightIndex
-      && expectedChar.toLocaleLowerCase() === actualChar.toLocaleLowerCase()
+      && lower(expectedChar) === lower(actualChar)
       && matrix[leftIndex][rightIndex] === matrix[leftIndex - 1][rightIndex - 1]) {
       operations.push({
         type: expectedChar === actualChar ? "equal" : "normalized",

@@ -515,7 +515,7 @@ export function createPlaybackUnits({ state, elements, shouldUseReaderMode, getE
   }
 
   function splitDisplayWords(text, language = state.targetLanguage) {
-    if (language === "zh") {
+    if (/^zh(-|$)/i.test(language)) {
       return [...text.replace(/\s+/g, "")].filter(Boolean);
     }
     return splitDisplayWordTokens(text, language).filter(token => token.clickable).map(token => token.text);
@@ -535,7 +535,7 @@ export function createPlaybackUnits({ state, elements, shouldUseReaderMode, getE
 
   function normalizeSpeechText(text, language = state.targetLanguage) {
     let source = String(text || "").trim();
-    if (language === "de" && /^[A-Z]$/.test(source)) source = source.toLowerCase();
+    if (/^de(-|$)/i.test(language) && /^[A-Z]$/.test(source)) source = source.toLowerCase();
     return filterSpeechText(source, language);
   }
 
@@ -546,7 +546,7 @@ export function createPlaybackUnits({ state, elements, shouldUseReaderMode, getE
 
   function splitDisplayWordTokens(text, language = state.targetLanguage) {
     const source = String(text || "");
-    if (language === "zh") {
+    if (/^zh(-|$)/i.test(language)) {
       let offset = 0;
       return [...source].map((char) => {
         const token = {
@@ -559,7 +559,7 @@ export function createPlaybackUnits({ state, elements, shouldUseReaderMode, getE
         return token;
       });
     }
-    return splitWordTokens(source);
+    return splitWordTokens(source, language);
   }
 
   function splitSentenceRangesForDisplay(text) {

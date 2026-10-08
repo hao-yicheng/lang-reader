@@ -321,8 +321,16 @@ export function createWorkspaceUi({ state, services, elements, document, window,
 
   function applyThemeMode(mode) {
     const isDark = mode === "dark" || (mode === "auto" && themeSystemQuery.matches);
-    document.documentElement.classList.toggle("dark", isDark);
-    document.documentElement.classList.toggle("light", !isDark);
+    const root = document.documentElement;
+    // Commit the palette together; component hover timings are not theme timings.
+    root.classList.add("theme-switching");
+    try {
+      root.classList.toggle("dark", isDark);
+      root.classList.toggle("light", !isDark);
+      root.getBoundingClientRect();
+    } finally {
+      root.classList.remove("theme-switching");
+    }
     elements.themeToggleButton.dataset.mode = mode;
     updateThemeButtonLabel();
   }

@@ -1,5 +1,5 @@
 import { DEFAULT_ROLES, DEFAULT_PARSER_ROLES, DEFAULT_TARGET_LANGUAGE, DEFAULT_TAG, REPEAT_INFINITY_VALUE } from "../core/config.js";
-import { LANGUAGES, getLanguage, getLanguageLabel, getVoiceBaseName, htmlLangFor, isValidLanguageCode } from "../i18n/languages.js";
+import { LANGUAGES, getSpeechLanguages, getLanguage, getLanguageLabel, getVoiceBaseName, htmlLangFor, isValidLanguageCode, isValidUiLanguage, normalizeDocumentLanguage, voiceMatchesLanguage } from "../i18n/languages.js";
 import { I18N } from "../i18n/i18n.js";
 import { normalizeConfigParseMode } from "./runtimeConfig.js";
 import { recoverableDrafts } from "../files/fileState.js";
@@ -30,10 +30,12 @@ export function createSettingsController({ state, services, elements, document, 
     if (profile.mode) elements.parseModeSelect.value = profile.mode;
     if (profile.targetLanguage) {
       state.targetLanguage = profile.targetLanguage;
+      populateSpeechLanguageOptions();
       elements.targetLanguageSelect.value = state.targetLanguage;
     }
     if (profile.translationLanguage) {
       state.translationLanguage = profile.translationLanguage === "target" ? state.targetLanguage : profile.translationLanguage;
+      populateSpeechLanguageOptions();
       elements.translationLanguageSelect.value = state.translationLanguage;
     }
     if (profile.clickMode) {
@@ -63,7 +65,7 @@ export function createSettingsController({ state, services, elements, document, 
   }
   function applyConfigDefaults() {
     const defaults = state.appConfig.defaults || {};
-    if (state.saved.uiLanguage === undefined) state.uiLanguage = getValidLanguageCode(defaults.uiLanguage, "en");
+    if (state.saved.uiLanguage === undefined) state.uiLanguage = isValidUiLanguage(defaults.uiLanguage) ? defaults.uiLanguage : "en";
     if (state.saved.targetLanguage === undefined) state.targetLanguage = getValidLanguageCode(defaults.targetLanguage, DEFAULT_TARGET_LANGUAGE);
     if (state.saved.translationLanguage === undefined) state.translationLanguage = getValidLanguageCode(defaults.translationLanguage, state.uiLanguage);
     if (state.saved.parseMode === undefined && defaults.parseMode) state.saved = { ...state.saved, parseMode: normalizeConfigParseMode(defaults.parseMode) };
@@ -77,14 +79,20 @@ export function createSettingsController({ state, services, elements, document, 
       value: language.code,
       label: getLanguageLabel(language.code, language.code)
     })));
-    populateSelect(elements.targetLanguageSelect, LANGUAGES.map((language) => ({
+    populateSpeechLanguageOptions();
+  }
+
+  function populateSpeechLanguageOptions() {
+    if (!elements.targetLanguageSelect?.append || !elements.translationLanguageSelect?.append) return;
+    const entries = getSpeechLanguages(speech?.getVoices() || [], [state.targetLanguage, state.translationLanguage,
+      ...(state.columnLanguages || [])]).map((language) => ({
       value: language.code,
       label: getLanguageLabel(language.code, state.uiLanguage)
-    })));
-    populateSelect(elements.translationLanguageSelect, LANGUAGES.map((language) => ({
-      value: language.code,
-      label: getLanguageLabel(language.code, state.uiLanguage)
-    })));
+    }));
+    populateSelect(elements.targetLanguageSelect, entries);
+    populateSelect(elements.translationLanguageSelect, entries);
+    elements.targetLanguageSelect.value = state.targetLanguage;
+    elements.translationLanguageSelect.value = state.translationLanguage;
   }
 
   function populateSelect(select, entries) {
@@ -233,6 +241,7 @@ export function createSettingsController({ state, services, elements, document, 
 
   function refreshVoices() {
     window.setTimeout(() => {
+      populateSpeechLanguageOptions();
       if (documentSettingsKey && speech.getVoices().length && !isSpeechSourceAvailable(elements.speechSourceSelect.value)) {
         const requested = elements.speechSourceSelect.value;
         elements.speechSourceSelect.value = "all";
@@ -300,7 +309,7 @@ export function createSettingsController({ state, services, elements, document, 
     if (source === "all") return true;
     const sourceVoices = filterVoicesBySource(speech.getVoices(), source);
     if (!sourceVoices.length) return false;
-    return [...getActiveSpeechLanguages()].every((language) => sourceVoices.some((voice) => languageCodeFromVoice(voice) === language));
+    return [...getActiveSpeechLanguages()].every((language) => sourceVoices.some((voice) => voiceMatchesLanguage(voice, language)));
   }
 
   function getSpeechSourceLabel(source) {
@@ -322,7 +331,7 @@ export function createSettingsController({ state, services, elements, document, 
     elements.languageVoiceControls.innerHTML = "";
     const languages = [...getActiveSpeechLanguages()];
     languages.forEach((language) => {
-      const languageVoices = sourceVoices.filter((voice) => languageCodeFromVoice(voice) === language);
+      const languageVoices = sourceVoices.filter((voice) => voiceMatchesLanguage(voice, language));
       const defaultVoice = pickDefaultVoice(languageVoices, language);
       const groups = groupVoicesByName(languageVoices, defaultVoice, language);
       if (!groups.length) return;
@@ -615,7 +624,7 @@ export function createSettingsController({ state, services, elements, document, 
   }
 
   function getValidLanguageCode(value, fallback = "en") {
-    return isValidLanguageCode(value) ? value : fallback;
+    return isValidLanguageCode(value) ? normalizeDocumentLanguage(value) : fallback;
   }
 
   function getActiveSpeechLanguages() {
@@ -637,7 +646,7 @@ export function createSettingsController({ state, services, elements, document, 
 
   function filterVoicesByActiveLanguages(voices) {
     const activeLanguages = getActiveSpeechLanguages();
-    return voices.filter((voice) => activeLanguages.has(languageCodeFromVoice(voice)));
+    return voices.filter(voice => [...activeLanguages].some(language => voiceMatchesLanguage(voice, language)));
   }
 
   function groupVoicesByName(voices, defaultVoice, defaultLanguage = state.targetLanguage) {
@@ -647,7 +656,7 @@ export function createSettingsController({ state, services, elements, document, 
       if (!groups.has(name)) groups.set(name, { name, voices: [], isDefault: false });
       const group = groups.get(name);
       group.voices.push(voice);
-      group.isDefault = group.isDefault || (voice.name === defaultVoice?.name && languageCodeFromVoice(voice) === defaultLanguage);
+      group.isDefault = group.isDefault || (voice.name === defaultVoice?.name && voiceMatchesLanguage(voice, defaultLanguage));
     });
     return [...groups.values()].sort((a, b) => {
       if (elements.speechSourceSelect.value === "all") {
@@ -669,7 +678,6 @@ export function createSettingsController({ state, services, elements, document, 
   }
 
   function pickDefaultVoice(voices, language = state.targetLanguage) {
-    const activeLanguages = getActiveSpeechLanguages();
     const preferred = (candidates) => {
       if (elements.speechSourceSelect.value !== "all") {
         return candidates.find((voice) => voice.default) || candidates[0];
@@ -679,13 +687,11 @@ export function createSettingsController({ state, services, elements, document, 
         priority[getVoiceSource(a)] - priority[getVoiceSource(b)] || Number(b.default) - Number(a.default)
       )[0];
     };
-    return preferred(voices.filter((voice) => languageCodeFromVoice(voice) === language))
-      || preferred(voices.filter((voice) => activeLanguages.has(languageCodeFromVoice(voice))))
-      || preferred(voices);
+    return preferred(voices.filter(voice => voiceMatchesLanguage(voice, language)));
   }
 
   function languageCodeFromVoice(voice) {
-    return String(voice.lang || "").slice(0, 2).toLowerCase();
+    return normalizeDocumentLanguage(voice.lang);
   }
 
   function filterVoicesBySource(voices, source) {
@@ -709,7 +715,7 @@ export function createSettingsController({ state, services, elements, document, 
 
   function normalizeLanguageSettings(value, defaults) {
     const source = Array.isArray(value) ? value : [];
-    return defaults.map((fallback, index) => isValidLanguageCode(source[index]) ? source[index] : fallback);
+    return defaults.map((fallback, index) => getValidLanguageCode(source[index], fallback));
   }
 
   function normalizeColumnTags(value, columnCount) {

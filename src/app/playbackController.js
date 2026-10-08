@@ -151,6 +151,19 @@ export function createPlaybackController({ state, units, elements, document, win
     const playbackRequest = buildPlaybackRequest(request);
     const units = buildPlaybackUnits(playbackRequest);
     if (!units.length) return;
+    let completedUnits = 0;
+    const remainingCounts = [false, true].map(readTranslations => {
+      const counts = Array(units.length + 1).fill(0);
+      for (let index = units.length - 1; index >= 0; index--) {
+        const unit = units[index];
+        const audible = (readTranslations || !unit.skipWhenTranslationsDisabled)
+          && Boolean(normalizeSpeechText(unit.text, unit.language));
+        counts[index] = counts[index + 1] + Number(audible);
+      }
+      return counts;
+    });
+    const requestProgress = (index, fraction = 0) => (completedUnits + fraction)
+      / Math.max(1, completedUnits + remainingCounts[Number(elements.readTranslationsInput.checked)][index]);
     state.playbackRunId += 1;
     const runId = state.playbackRunId;
     const selectionLevel = state.activeSelectionMode === "play" ? getPlaybackUnitLevel() : getClickUnitMode();
@@ -173,7 +186,6 @@ export function createPlaybackController({ state, units, elements, document, win
       setActiveCursorFromUnit(unit);
       const speechText = normalizeSpeechText(unit.text, unit.language);
       if (!speechText) {
-        setPlaybackProgress((unitIndex + 1) / units.length);
         continue;
       }
       const locateSpeechCursor = createSpeechCursorResolver(unit, speechText);
@@ -197,7 +209,7 @@ export function createPlaybackController({ state, units, elements, document, win
               if (!state.isPlaying || state.isPaused || runId !== state.playbackRunId) return;
               const repeats = getRepeatCount();
               const unitProgress = Number.isFinite(repeats) ? (repeatIndex + fraction) / repeats : fraction;
-              const progress = (unitIndex + unitProgress) / units.length;
+              const progress = requestProgress(unitIndex, unitProgress);
               setPlaybackProgress(Math.max(state.playbackProgress.target, progress));
             }
           });
@@ -212,7 +224,8 @@ export function createPlaybackController({ state, units, elements, document, win
         if (shouldContinueRepeat(repeatIndex + 1, runId)) await waitForPlayback(getUnitGap(), runId);
       }
       if (!state.isPlaying || runId !== state.playbackRunId) break;
-      setPlaybackProgress((unitIndex + 1) / units.length);
+      completedUnits++;
+      setPlaybackProgress(Math.max(state.playbackProgress.target, requestProgress(unitIndex + 1)));
       if (unitIndex + 1 < units.length) await waitForPlayback(getBoundaryGap(unit, units[unitIndex + 1]), runId);
     }
     if (runId === state.playbackRunId) {

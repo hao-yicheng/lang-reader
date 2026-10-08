@@ -1,7 +1,7 @@
 ---
 mode: reader       # reader/vocabulary
-target: en         # de/en/zh/bg
-translation: na    # de/en/zh/bg/mix/na
+target: en         # language code, e.g. en/de/zh/bg/ja/fr-FR
+translation: na    # language code or mix/na (same as target)
 # click_mode: word       # word/sentence/paragraph; cell also works in Vocabulary
 # play_mode: sentence    # word/sentence/paragraph; paragraph means cell in Vocabulary
 # loop_count: 2          # 1-20 or infinite
@@ -67,6 +67,8 @@ CNT (Loop count): 1–20 or unlimited. GAP (Unit gap): 0.25, 0.5, 0.75, 1, then 
 ## Voices
 
 Speech uses browser/system voices. Select a provider, then a voice for each active document language.
+
+Target, Translation, and column languages include the voices available in your browser; UI language is separate. Japanese and other unspaced languages use word segmentation. Chinese keeps character-by-character Word mode. Voice availability varies by browser and device.
 
 The speedometer adjusts speed (0.5–3×); the speaker adjusts volume (0–100%).
 

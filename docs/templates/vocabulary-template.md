@@ -1,7 +1,7 @@
 ---
 mode: vocabulary   # reader/vocabulary
-target: de         # de/en/zh/bg
-translation: en    # de/en/zh/bg/mix/na
+target: de         # language code, e.g. de/en/zh/bg/ja/fr-FR
+translation: en    # language code or mix/na (same as target)
 ---
 
 # Vokabelliste [Vocabulary List]
